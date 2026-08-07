@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هویت ساز ایرانی، تولید اطلاعات فیک: کارت ملی، شماره موبایل، آدرس و بانکی</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+            position: relative;
+            padding-top: 20px;
+            padding-bottom: 120px;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 760px;
+            text-align: center;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 20px 30px;
+            width: 100%;
+            max-width: 760px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .lang-flag {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1002;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+        .lang-flag:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .lang-flag:active {
+            transform: scale(0.95);
+        }
+
+        .generate-btn {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+        }
+        .generate-btn:hover {
+            background-color: #005bb5;
+            transform: translateY(-2px);
+        }
+        .generate-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 122, 255, 0.3);
+        }
+
+        #outputCard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+            width: 100%;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        #outputCard.lang-switch-anim {
+            opacity: 0;
+            transform: scale(0.96);
+        }
+
+        .data-section {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 18px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 25px;
+            flex: 0 0 calc(50% - 10px);
+            min-width: 320px;
+            box-sizing: border-box;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #1a75ff;
+            margin-bottom: 18px;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(0, 122, 255, 0.15);
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 1em;
+            color: #444;
+        }
+        .data-item:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-weight: 600;
+            color: #555;
+            flex-shrink: 0;
+            padding-left: 10px;
+            text-align: right;
+        }
+
+        .data-value {
+            flex-grow: 1;
+            direction: ltr;
+            font-family: 'SF Mono', 'Courier New', monospace;
+            color: #2c3e50;
+            word-break: break-all;
+            font-size: 1.05em;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .data-value:hover {
+            color: #007aff;
+            text-decoration: underline;
+        }
+        .data-value:active {
+            transform: scale(0.98);
+        }
+
+        @media (min-width: 769px) {
+            .data-item:has(#address) .data-value,
+            .data-item:has(#fullName) .data-value,
+            .data-item:has(#birthCity) .data-value,
+            .data-item:has(#job) .data-value {
+                direction: rtl;
+                text-align: right;
+            }
+        }
+
+        .footer-sticky {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05);
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #555;
+            box-sizing: border-box;
+            z-index: 1000;
+            font-weight: 400;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .footer-sticky a {
+            color: #007aff;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s ease;
+        }
+        .footer-sticky a:hover {
+            color: #005bb5;
+            text-decoration: underline;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 8px 2px #FFD700;
+            animation: moveHorizontal linear infinite;
+            opacity: 0;
+            pointer-events: none;
+        }
+        @keyframes moveHorizontal {
+            0% { transform: translateX(100vw); opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { transform: translateX(-50px); opacity: 0; }
+        }
+
+        .star {
+            position: absolute;
+            color: #FFD700;
+            font-size: 0.9em;
+            text-shadow: 0 0 12px #FFD700;
+            animation: starPass linear infinite;
+            opacity: 0;
+            pointer-events: none;
+            user-select: none;
+        }
+        .footer-sticky:hover .star {
+            opacity: 1;
+        }
+        @keyframes starPass {
+            0% { transform: translateX(100vw) rotate(0deg); opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { transform: translateX(-50px) rotate(360deg); opacity: 0; }
+        }
+
+        .by-ares {
+            font-size: 0.8em;
+            color: rgba(0, 0, 0, 0.5);
+            direction: ltr;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        #copyToast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #28a745;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 0.95em;
+            font-weight: 600;
+            box-shadow: 0 6px 18px rgba(40, 167, 69, 0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 2000;
+        }
+        #copyToast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                padding-top: 20px;
+                padding-bottom: 100px;
+            }
+            #app {
+                margin-top: 40px;
+            }
+            h1 {
+                font-size: 1.6em;
+                padding: 15px 20px;
+            }
+            .generate-btn {
+                max-width: 90%;
+                margin-bottom: 20px;
+            }
+            #outputCard {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .data-section {
+                flex: 1 1 100%;
+                min-width: unset;
+                padding: 20px;
+            }
+            .data-item {
+                flex-direction: column;
+                align-items: flex-end;
+                padding: 10px 0;
+            }
+            .data-label {
+                padding-left: 0;
+                padding-right: 0;
+                margin-bottom: 3px;
+                width: 100%;
+                text-align: right;
+            }
+            .data-value {
+                width: 100%;
+                font-size: 1em;
+                text-align: right;
+            }
+            .data-item:has(#phoneNumber) .data-value,
+            .data-item:has(#nationalCode) .data-value,
+            .data-item:has(#cardNumber) .data-value,
+            .data-item:has(#cvv2) .data-value,
+            .data-item:has(#cardExpiry) .data-value,
+            .data-item:has(#postalCode) .data-value,
+            .data-item:has(#username) .data-value {
+                direction: ltr;
+                text-align: left;
+            }
+            #copyToast {
+                bottom: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="lang-flag" id="langToggle" title="تغییر زبان / Change language">🇮🇷</button>
+
+    <div id="app">
+        <h1>هویت ساز ایرانی: تولید اطلاعات فیک (کارت ملی، شماره موبایل، آدرس و بانکی)</h1>
+        <button class="generate-btn" id="generateButton">تولید اطلاعات جدید</button>
+
+        <div id="outputCard">
+            <div class="data-section">
+                <div class="section-title" data-i18n="section_personal">اطلاعات فردی</div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_fullName">نام و نام خانوادگی:</span>
+                    <span class="data-value" id="fullName"></span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_gender">جنسیت:</span>
+                    <span class="data-value" id="gender"></span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_birthDate">تاریخ تولد:</span>
+                    <span class="data-value" id="birthDate"></span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_birthCity">شهر محل تولد:</span>
+                    <span class="data-value" id="birthCity"></span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_nationalCode">کد ملی:</span>
+                    <span class="data-value" id="nationalCode"></span>
+                </div>
+            </div>
+
+            <div class="data-section">
+                <div class="section-title" data-i18n="section_contact">اطلاعات تماس</div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_phoneNumber">شماره موبایل:</span>
+                    <span class="data-value" id="phoneNumber"></span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_address">آدرس:</span>
+                    <span class="data-value" id="address"></span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_postalCode">کد پستی:</span>
+                    <span class="data-value" id="postalCode"></span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_username">نام کاربری:</span>
+                    <span class="data-value" id="username"></span>
+                </div>
+            </div>
+
+            <div class="data-section">
+                <div class="section-title" data-i18n="section_bank">اطلاعات بانکی</div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_cardNumber">شماره کارت:</span>
+                    <span class="data-value" id="cardNumber"></span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_cvv2">CVV2:</span>
+                    <span class="data-value" id="cvv2"></span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_cardExpiry">تاریخ انقضای کارت:</span>
+                    <span class="data-value" id="cardExpiry"></span>
+                </div>
+            </div>
+
+            <div class="data-section">
+                <div class="section-title" data-i18n="section_other">سایر اطلاعات</div>
+                <div class="data-item">
+                    <span class="data-label" data-i18n="label_job">شغل:</span>
+                    <span class="data-value" id="job"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-sticky" id="footerSticky">
+        <span id="footerText" data-i18n="footer_text">اگه از این پروژه خوشتون اومد به <a href="https://github.com/ar33s0/fakesaz" target="_blank" rel="noopener noreferrer">ریپازیتوری گیتهاب من</a> ستاره بدید</span>
+        <span class="by-ares">by Gemini, Ares</span>
+    </div>
+
+    <div id="copyToast"></div>
+
+    <script>
+        const maleNames = ["علی", "محمد", "حسین", "رضا", "امیر", "مهدی", "سید", "جواد", "مصطفی", "حسن", "محمدرضا", "ابوالفضل", "محمود", "پارسا", "کیان", "آرش", "بهنام", "پویا", "داریوش", "رامین", "سروش", "فرهاد", "کوروش", "مانی", "نادر", "هومن", "یوسف", "شهرام", "کامران", "افشین", "مجید", "بهزاد", "سامان", "فرید", "بهرام", "مجتبی", "کاوه", "اردلان", "آرمان", "پرهام", "دانیال", "زانیار", "میلاد", "سپهر", "پژمان", "کیارش", "مازیار", "کیوان", "افشین", "بردیا", "پارسا", "مهرداد", "سیامک", "پیمان", "شهاب", "امید", "فرزاد", "نوید", "اشکان", "بابک", "هاتف", "سینا", "فرشاد", "مهران", "جهانبخش", "سروش", "کاووس", "ایرج", "شاپور"];
+        const femaleNames = ["فاطمه", "زهرا", "مریم", "زینب", "نازنین", "سارا", "آزاده", "لیلا", "نیره", "شقایق", "مهسا", "زینب", "هانیه", "کوثر", "یکتا", "آتنا", "بهاره", "پریا", "دینا", "رها", "سحر", "فرناز", "کیمیا", "مهناز", "نگار", "هدیه", "یاسمن", "شیدا", "گلناز", "افسون", "مژگان", "بهناز", "آرزو", "پگاه", "ترانه", "ژاله", "رویا", "سپیده", "شادی", "مهتاب", "نیلوفر", "هستی", "آیدا", "پروانه", "جواهر", "خاطره", "دلناز", "زیبا", "ستاره", "شهرزاد", "غزل", "فرشته", "نرگس", "ویدا", "پریسا", "الهام", "سیمین", "مارال", "ملیکا", "آنیسا", "نیکی", "پریناز", "مرجان", "شبنم", "نسترن", "گلنوش", "آوین", "روژان", "سوسن", "لاله", "آناهیتا", "کتایون"];
+        const lastNames = ["کریمی", "محمدی", "حسینی", "رضایی", "مرادی", "بهرامی", "اکبری", "اسدی", "عزیزی", "احمدی", "فراهانی", "قاسمی", "نوروزی", "هاشمی", "سلیمانی", "شریفی", "زمانی", "یوسفی", "موسوی", "رحمتی", "یزدانی", "مقدم", "عابدی", "دانشور", "صادقی", "بخشی", "جعفری", "خسروی", "درویشی", "زارعی", "شجاعی", "طاهری", "عظیمی", "غفاری", "فدایی", "قادری", "کمالی", "لطفی", "ناصری", "وکیلی", "هادیان", "یاراحمدی", "پناهی", "چگینی", "صفری", "گلستانی", "میراحمدی", "نظری", "واحدی", "بیگدلی", "دهقان", "روشن", "زرین‌کوب", "سعیدی", "فریدونی", "محمودی", "نادری", "یادگاری", "پاکدل", "جباری", "حسن‌زاده", "رستمی", "شیروانی", "طیبی", "علیزاده", "فخاری", "قربانی", "کوهی", "مرتضوی", "نیک‌خواه", "هوشمند", "یعقوبی", "آریافر", "بنی‌هاشمی", "پارسایی", "توسلی", "ثابتی", "جهانگیری", "خلیلی", "دبیری", "رازقی", "زندی", "شایان", "صابری", "ضیایی", "طاهری", "ظفری", "عبدلی", "غیاثی", "فاضلی", "قربانی", "کریم‌زاده", "گنجی", "لطفی", "نیک‌بین", "هادوی", "یاسری"];
+
+        const nameLatinMap = {
+            "علی": "Ali", "محمد": "Mohammad", "حسین": "Hossein", "رضا": "Reza", "امیر": "Amir", "مهدی": "Mehdi",
+            "سید": "Seyed", "جواد": "Javad", "مصطفی": "Mostafa", "حسن": "Hassan", "محمدرضا": "Mohammadreza",
+            "ابوالفضل": "Abolfazl", "محمود": "Mahmoud", "پارسا": "Parsa", "کیان": "Kian", "آرش": "Arash",
+            "بهنام": "Behnam", "پویا": "Pouya", "داریوش": "Dariush", "رامین": "Ramin", "سروش": "Soroush",
+            "فرهاد": "Farhad", "کوروش": "Kourosh", "مانی": "Mani", "نادر": "Nader", "هومن": "Houman",
+            "یوسف": "Yousef", "شهرام": "Shahram", "کامران": "Kamran", "افشین": "Afshin", "مجید": "Majid",
+            "بهزاد": "Behzad", "سامان": "Saman", "فرید": "Farid", "بهرام": "Bahram", "مجتبی": "Mojtaba",
+            "کاوه": "Kaveh", "اردلان": "Ardalan", "آرمان": "Arman", "پرهام": "Parham", "دانیال": "Daniel",
+            "زانیار": "Zanyar", "میلاد": "Milad", "سپهر": "Sepehr", "پژمان": "Pezhman", "کیارش": "Kiarash",
+            "مازیار": "Maziar", "کیوان": "Keyvan", "بردیا": "Bardia", "مهرداد": "Mehrdad", "سیامک": "Siamak",
+            "پیمان": "Peyman", "شهاب": "Shahab", "امید": "Omid", "فرزاد": "Farzad", "نوید": "Navid",
+            "اشکان": "Ashkan", "بابک": "Babak", "هاتف": "Hatef", "سینا": "Sina", "فرشاد": "Farshad",
+            "مهران": "Mehran", "جهانبخش": "Jahanbakhsh", "کاووس": "Kavoos", "ایرج": "Iraj", "شاپور": "Shapour",
+            "فاطمه": "Fatemeh", "زهرا": "Zahra", "مریم": "Maryam", "زینب": "Zeinab", "نازنین": "Nazanin",
+            "سارا": "Sara", "آزاده": "Azadeh", "لیلا": "Leila", "نیره": "Nayereh", "شقایق": "Shaghayegh",
+            "مهسا": "Mahsa", "هانیه": "Hanieh", "کوثر": "Kowsar", "یکتا": "Yekta", "آتنا": "Atena",
+            "بهاره": "Bahareh", "پریا": "Paria", "دینا": "Dina", "رها": "Raha", "سحر": "Sahar",
+            "فرناز": "Farnaz", "کیمیا": "Kimia", "مهناز": "Mahnaz", "نگار": "Negar", "هدیه": "Hadieh",
+            "یاسمن": "Yasaman", "شیدا": "Sheyda", "گلناز": "Golnaz", "افسون": "Afsoon", "مژگان": "Mozhgan",
+            "بهناز": "Behnaz", "آرزو": "Arezoo", "پگاه": "Pegah", "ترانه": "Taraneh", "ژاله": "Zhaleh",
+            "رویا": "Roya", "سپیده": "Sepideh", "شادی": "Shadi", "مهتاب": "Mahtab", "نیلوفر": "Niloufar",
+            "هستی": "Hasti", "آیدا": "Aida", "پروانه": "Parvaneh", "جواهر": "Javaher", "خاطره": "Khatereh",
+            "دلناز": "Delnaz", "زیبا": "Ziba", "ستاره": "Setareh", "شهرزاد": "Shahrzad", "غزل": "Ghazal",
+            "فرشته": "Fereshteh", "نرگس": "Narges", "ویدا": "Vida", "پریسا": "Parisa", "الهام": "Elham",
+            "سیمین": "Simin", "مارال": "Maral", "ملیکا": "Melika", "آنیسا": "Anisa", "نیکی": "Niki",
+            "پریناز": "Parinaz", "مرجان": "Marjan", "شبنم": "Shabnam", "نسترن": "Nastaran", "گلنوش": "Golnoush",
+            "آوین": "Avin", "روژان": "Rozhan", "سوسن": "Sousan", "لاله": "Laleh", "آناهیتا": "Anahita",
+            "کتایون": "Katayoun", "کریمی": "Karimi", "محمدی": "Mohammadi", "حسینی": "Hosseini",
+            "رضایی": "Rezaei", "مرادی": "Moradi", "بهرامی": "Bahrami", "اکبری": "Akbari", "اسدی": "Asadi",
+            "عزیزی": "Azizi", "احمدی": "Ahmadi", "فراهانی": "Farahani", "قاسمی": "Ghasemi", "نوروزی": "Nowroozi",
+            "هاشمی": "Hashemi", "سلیمانی": "Soleimani", "شریفی": "Sharifi", "زمانی": "Zamani", "یوسفی": "Yousefi",
+            "موسوی": "Mousavi", "رحمتی": "Rahmati", "یزدانی": "Yazdani", "مقدم": "Moghaddam", "عابدی": "Abedi",
+            "دانشور": "Daneshvar", "صادقی": "Sadeghi", "بخشی": "Bakhshi", "جعفری": "Jafari", "خسروی": "Khosravi",
+            "درویشی": "Darvishi", "زارعی": "Zarei", "شجاعی": "Shojaee", "طاهری": "Taheri", "عظیمی": "Azimi",
+            "غفاری": "Ghaffari", "فدایی": "Fadaei", "قادری": "Ghaderi", "کمالی": "Kamali", "لطفی": "Lotfi",
+            "ناصری": "Naseri", "وکیلی": "Vakili", "هادیان": "Hadian", "یاراحمدی": "Yarahmadi", "پناهی": "Panahi",
+            "چگینی": "Chegini", "صفری": "Safari", "گلستانی": "Golestani", "میراحمدی": "Mirahmadi", "نظری": "Nazari",
+            "واحدی": "Vahedi", "بیگدلی": "Bigdeli", "دهقان": "Dehghan", "روشن": "Roshan", "زرین‌کوب": "Zarrinkoob",
+            "سعیدی": "Saeidi", "فریدونی": "Fereidooni", "محمودی": "Mahmoodi", "نادری": "Naderi", "یادگاری": "Yadegari",
+            "پاکدل": "Pakdel", "جباری": "Jabbari", "حسن‌زاده": "Hasanzadeh", "رستمی": "Rostami", "شیروانی": "Shirvani",
+            "طیبی": "Tayyebi", "علیزاده": "Alizadeh", "فخاری": "Fakhari", "قربانی": "Ghorbani", "کوهی": "Koohi",
+            "مرتضوی": "Mortazavi", "نیک‌خواه": "NikKhah", "هوشمند": "Hooshmand", "یعقوبی": "Yaghoubi",
+            "آریافر": "Ariafar", "بنی‌هاشمی": "Bani Hashemi", "پارسایی": "Parsaei", "توسلی": "Tavasoli",
+            "ثابتی": "Sabeti", "جهانگیری": "Jahangiri", "خلیلی": "Khalili", "دبیری": "Dabiri", "رازقی": "Razeghi",
+            "زندی": "Zandi", "شایان": "Shayan", "صابری": "Saberi", "ضیایی": "Ziaei", "ظفری": "Zafari",
+            "عبدلی": "Abdoli", "غیاثی": "Ghiyasi", "فاضلی": "Fazeli", "کریم‌زاده": "Karimzadeh", "گنجی": "Ganji",
+            "نیک‌بین": "Nikbin", "هادوی": "Hadavi", "یاسری": "Yasseri"
+        };
+
+        function getLatin(name) {
+            return nameLatinMap[name] || name;
+        }
+
+        const cities = [
+            { name: "تهران", province: "تهران", nationalCodePrefixes: ["001", "002", "003", "004", "005", "006", "007", "008", "011", "020", "025"], postcodeRange: [11111, 19999] },
+            { name: "مشهد", province: "خراسان رضوی", nationalCodePrefixes: ["092", "093", "094"], postcodeRange: [91331, 93781] },
+            { name: "اصفهان", province: "اصفهان", nationalCodePrefixes: ["127", "128", "129"], postcodeRange: [81331, 83791] },
+            { name: "تبریز", province: "آذربایجان شرقی", nationalCodePrefixes: ["136", "137", "138"], postcodeRange: [51331, 51999] },
+            { name: "شیراز", province: "فارس", nationalCodePrefixes: ["228", "229", "230"], postcodeRange: [71331, 73491] },
+            { name: "اهواز", province: "خوزستان", nationalCodePrefixes: ["174", "175"], postcodeRange: [61331, 61791] },
+            { name: "قم", province: "قم", nationalCodePrefixes: ["037", "038"], postcodeRange: [37131, 37491] },
+            { name: "کرج", province: "البرز", nationalCodePrefixes: ["031", "032"], postcodeRange: [31331, 31999] },
+            { name: "رشت", province: "گیلان", nationalCodePrefixes: ["258", "259"], postcodeRange: [41331, 41999] },
+            { name: "کرمان", province: "کرمان", nationalCodePrefixes: ["298", "299"], postcodeRange: [76131, 77951] },
+            { name: "یزد", province: "یزد", nationalCodePrefixes: ["442", "443"], postcodeRange: [89131, 89493] },
+            { name: "ارومیه", province: "آذربایجان غربی", nationalCodePrefixes: ["274", "275"], postcodeRange: [57131, 57591] },
+            { name: "کرمانشاه", province: "کرمانشاه", nationalCodePrefixes: ["324", "325"], postcodeRange: [67131, 67851] },
+            { name: "همدان", province: "همدان", nationalCodePrefixes: ["386", "387"], postcodeRange: [65131, 65651] },
+            { name: "زاهدان", province: "سیستان و بلوچستان", nationalCodePrefixes: ["361", "362"], postcodeRange: [98131, 98491] },
+            { name: "اردبیل", province: "اردبیل", nationalCodePrefixes: ["145", "146"], postcodeRange: [56131, 56491] },
+            { name: "بندرعباس", province: "هرمزگان", nationalCodePrefixes: ["338", "339"], postcodeRange: [79131, 79661] },
+            { name: "ساری", province: "مازندران", nationalCodePrefixes: ["208", "209"], postcodeRange: [48131, 48491] },
+            { name: "گرگان", province: "گلستان", nationalCodePrefixes: ["211", "212"], postcodeRange: [49131, 49371] },
+            { name: "سنندج", province: "کردستان", nationalCodePrefixes: ["372", "373"], postcodeRange: [66131, 66199] },
+            { name: "خرم‌آباد", province: "لرستان", nationalCodePrefixes: ["406", "407"], postcodeRange: [68131, 68891] },
+            { name: "اراک", province: "مرکزی", nationalCodePrefixes: ["052", "053"], postcodeRange: [38131, 38571] },
+            { name: "قزوین", province: "قزوین", nationalCodePrefixes: ["431", "432"], postcodeRange: [34131, 34981] },
+            { name: "بیرجند", province: "خراسان جنوبی", nationalCodePrefixes: ["064", "065"], postcodeRange: [97131, 97481] },
+            { name: "بجنورد", province: "خراسان شمالی", nationalCodePrefixes: ["067", "068"], postcodeRange: [94131, 94591] },
+            { name: "ایلام", province: "ایلام", nationalCodePrefixes: ["449", "450"], postcodeRange: [69311, 69391] },
+            { name: "بوشهر", province: "بوشهر", nationalCodePrefixes: ["349", "350"], postcodeRange: [75131, 75461] },
+            { name: "شهرکرد", province: "چهارمحال و بختیاری", nationalCodePrefixes: ["461", "462"], postcodeRange: [88131, 88591] },
+            { name: "یاسوج", province: "کهگیلویه و بویراحمد", nationalCodePrefixes: ["422", "423"], postcodeRange: [75911, 75981] },
+            { name: "سمنان", province: "سمنان", nationalCodePrefixes: ["351", "357"], postcodeRange: [35131, 35791] },
+            { name: "زنجان", province: "زنجان", nationalCodePrefixes: ["451", "452", "453", "454", "455"], postcodeRange: [45131, 45541] },
+            { name: "سیرجان", province: "کرمان", nationalCodePrefixes: ["306", "307"], postcodeRange: [78131, 78391] },
+            { name: "کاشان", province: "اصفهان", nationalCodePrefixes: ["125", "126"], postcodeRange: [87131, 87591] },
+            { name: "دزفول", province: "خوزستان", nationalCodePrefixes: ["199", "200"], postcodeRange: [64611, 64691] },
+            { name: "نیشابور", province: "خراسان رضوی", nationalCodePrefixes: ["105", "106"], postcodeRange: [93131, 93491] },
+            { name: "سبزوار", province: "خراسان رضوی", nationalCodePrefixes: ["078", "079"], postcodeRange: [96131, 96591] },
+            { name: "آمل", province: "مازندران", nationalCodePrefixes: ["461", "462", "463"], postcodeRange: [46131, 46391] },
+            { name: "بابل", province: "مازندران", nationalCodePrefixes: ["471", "472", "473", "474", "475"], postcodeRange: [47131, 47591] },
+            { name: "قائم‌شهر", province: "مازندران", nationalCodePrefixes: ["476", "477"], postcodeRange: [47611, 47791] },
+            { name: "کاشمر", province: "خراسان رضوی", nationalCodePrefixes: ["089", "090"], postcodeRange: [96711, 96791] },
+            { name: "جهرم", province: "فارس", nationalCodePrefixes: ["246", "247"], postcodeRange: [74131, 74591] },
+            { name: "بندر انزلی", province: "گیلان", nationalCodePrefixes: ["264"], postcodeRange: [43131, 43191] },
+            { name: "بروجرد", province: "لرستان", nationalCodePrefixes: ["412", "413"], postcodeRange: [68971, 69199] },
+            { name: "تربت حیدریه", province: "خراسان رضوی", nationalCodePrefixes: ["069", "070"], postcodeRange: [95131, 95591] },
+            { name: "قوچان", province: "خراسان رضوی", nationalCodePrefixes: ["086", "087"], postcodeRange: [94711, 94861] },
+            { name: "ساوه", province: "مرکزی", nationalCodePrefixes: ["059", "060"], postcodeRange: [39131, 39491] },
+            { name: "خوی", province: "آذربایجان غربی", nationalCodePrefixes: ["279", "280"], postcodeRange: [58131, 58591] },
+            { name: "نقده", province: "آذربایجان غربی", nationalCodePrefixes: ["290"], postcodeRange: [57611, 57691] },
+            { name: "میاندوآب", province: "آذربایجان غربی", nationalCodePrefixes: ["296", "297"], postcodeRange: [59351, 59361] },
+            { name: "بانه", province: "کردستان", nationalCodePrefixes: ["384"], postcodeRange: [66911, 66991] },
+            { name: "سقز", province: "کردستان", nationalCodePrefixes: ["375", "376"], postcodeRange: [66811, 66891] }
+        ];
+
+        const mobilePrefixes = ["0910", "0911", "0912", "0913", "0914", "0915", "0916", "0917", "0918", "0919", "0930", "0933", "0935", "0936", "0937", "0938", "0939", "0990", "0991", "0992", "0993", "0994", "0901", "0902", "0903", "0904", "0905", "0920", "0921", "0922", "0931", "0932", "0934", "0998", "0999"];
+
+        const jobTitles = [
+            "معلم", "مهندس نرم‌افزار", "پزشک", "پرستار", "کارمند اداری", "فروشنده", "طراح گرافیک", "حسابدار",
+            "آشپز", "برنامه‌نویس وب", "وکیل", "دانشجو", "استاد دانشگاه", "کشاورز", "راننده", "بازاریاب",
+            "مدیر پروژه", "هنرمند", "ورزشکار", "خبرنگار", "خانه‌دار", "کارگر", "صنعتگر", "معمار",
+            "دندانپزشک", "داروساز", "روانشناس", "فیزیوتراپیست", "مکانیک", "برقکار", "نجار", "آرایشگر",
+            "خیاط", "طراح لباس", "عکاس", "فیلمبردار", "موسیقیدان", "خواننده", "بازیگر", "نویسنده",
+            "شاعر", "روزنامه‌نگار", "کارآفرین", "سرمایه‌گذار", "تحلیلگر داده", "متخصص امنیت شبکه", "مدیر شبکه", "طراح محصول",
+            "مدیر منابع انسانی", "مشاور مالی", "کارشناس بیمه", "فناوری اطلاعات", "وب‌مستر", "کپی‌رایتر", "مدیر محتوا", "متخصص سئو",
+            "مدیر بازاریابی", "معامله‌گر", "بانکدار", "حسابرس", "دامپزشک", "ارتوپد", "بینایی سنج", "شنوایی سنج",
+            "کارشناس تغذیه", "مربی ورزشی", "نیروی انتظامی", "آتش‌نشان", "کارمند بانک", "مدیرعامل", "بازرس", "کارشناس IT",
+            "معمار داخلی", "مهندس برق", "مهندس عمران", "پلیس", "قاضی", "ناشر", "مترجم", "برنامه‌ریز", "تحلیلگر مالی",
+            "متخصص منابع انسانی", "مشاور املاک", "کارمند دولت", "فعال اجتماعی"
+        ];
+
+        const streetNames = ["خیابان ولیعصر", "خیابان انقلاب", "خیابان آزادی", "بلوار کشاورز", "خیابان شریعتی", "خیابان جمهوری", "خیابان مطهری", "خیابان سهروردی", "میدان آزادی", "میدان انقلاب", "بلوار فردوسی", "خیابان حافظ", "خیابان سعدی", "خیابان ملاصدرا", "خیابان شهید بهشتی", "خیابان فاطمی", "خیابان گاندی", "خیابان وزرا", "بلوار میرداماد", "خیابان آفریقا", "خیابان ولیعصر شمالی", "خیابان ولیعصر جنوبی", "خیابان طالقانی", "خیابان فردوسی", "خیابان لاله زار", "خیابان جمهوری اسلامی", "خیابان کارگر شمالی", "خیابان کارگر جنوبی", "خیابان دماوند", "خیابان پیروزی", "خیابان آیت الله کاشانی", "بلوار آیت الله کاشانی", "خیابان ستارخان", "بلوار مرزداران", "خیابان گیشا", "خیابان ونک", "خیابان ملاصدرا", "خیابان شیخ بهایی", "خیابان فرشته", "خیابان کامرانیه", "خیابان نیاوران", "خیابان پاسداران", "خیابان شریعتی شمالی", "خیابان سمیه", "خیابان استاد نجات‌اللهی", "خیابان سپهبد قرنی", "خیابان مفتح", "خیابان بهار شیراز", "خیابان بهار جنوبی", "خیابان کریمخان زند", "خیابان قائم مقام فراهانی"];
+        const alleyNames = ["کوچه اول", "کوچه دوم", "کوچه لاله", "کوچه نرگس", "کوچه اقاقیا", "کوچه بن‌بست", "کوچه رز", "کوچه نسترن", "کوچه مهر", "کوچه آفتاب", "کوچه شبنم", "کوچه یاس", "کوچه ارکیده", "کوچه گلستان", "کوچه بهار", "کوچه پاییز", "کوچه زمستان", "کوچه تابستان", "کوچه دانش", "کوچه امید", "کوچه صلح", "کوچه دوستی", "کوچه آزادی", "کوچه استقلال", "کوچه آذر", "کوچه دی", "کوچه بهمن", "کوچه اسفند", "کوچه فروردین", "کوچه اردیبهشت", "کوچه خرداد", "کوچه تیر", "کوچه مرداد", "کوچه شهریور", "کوچه مهر", "کوچه آبان", "کوچه آذر", "کوچه نوبهار", "کوچه دلگشا", "کوچه پرستو", "کوچه آفتابگردان", "کوچه ستاره", "کوچه شقایق"];
+
+        const bankBins = [
+            { name: "ملی", bin: "603799" },
+            { name: "صادرات", bin: "603769" },
+            { name: "سامان", bin: "621986" },
+            { name: "سپه", bin: "589210" },
+            { name: "تجارت", bin: "627353" },
+            { name: "ملت", bin: "610433" },
+            { name: "پاسارگاد", bin: "502229" },
+            { name: "پارسیان", bin: "622106" },
+            { name: "اقتصاد نوین", bin: "627412" },
+            { name: "کارآفرین", bin: "627488" },
+            { name: "مسکن", bin: "628023" },
+            { name: "کشاورزی", bin: "603770" }
+        ];
+
+        let currentLang = 'fa';
+
+        const translations = {
+            fa: {
+                section_personal: "اطلاعات فردی",
+                label_fullName: "نام و نام خانوادگی:",
+                label_gender: "جنسیت:",
+                label_birthDate: "تاریخ تولد:",
+                label_birthCity: "شهر محل تولد:",
+                label_nationalCode: "کد ملی:",
+                section_contact: "اطلاعات تماس",
+                label_phoneNumber: "شماره موبایل:",
+                label_address: "آدرس:",
+                label_postalCode: "کد پستی:",
+                label_username: "نام کاربری:",
+                section_bank: "اطلاعات بانکی",
+                label_cardNumber: "شماره کارت:",
+                label_cvv2: "CVV2:",
+                label_cardExpiry: "تاریخ انقضای کارت:",
+                section_other: "سایر اطلاعات",
+                label_job: "شغل:",
+                gender_male: "مرد",
+                gender_female: "زن",
+                address_plaque: "پلاک",
+                footer_text: 'اگه از این پروژه خوشتون اومد به <a href="https://github.com/ar33s0/fakesaz" target="_blank" rel="noopener noreferrer">ریپازیتوری گیت هاب من</a> ستاره بدهید.',
+                generate_btn: "تولید اطلاعات جدید",
+                copy_suffix: "کپی شد",
+                title: "هویت ساز ایرانی: تولید اطلاعات فیک (کارت ملی، شماره موبایل، آدرس و بانکی)"
+            },
+            en: {
+                section_personal: "Personal Info",
+                label_fullName: "Full Name:",
+                label_gender: "Gender:",
+                label_birthDate: "Birth Date:",
+                label_birthCity: "City of Birth:",
+                label_nationalCode: "National Code:",
+                section_contact: "Contact Info",
+                label_phoneNumber: "Mobile Number:",
+                label_address: "Address:",
+                label_postalCode: "Postal Code:",
+                label_username: "Username:",
+                section_bank: "Bank Info",
+                label_cardNumber: "Card Number:",
+                label_cvv2: "CVV2:",
+                label_cardExpiry: "Expiry Date:",
+                section_other: "Other Info",
+                label_job: "Job:",
+                gender_male: "Male",
+                gender_female: "Female",
+                address_plaque: "No.",
+                footer_text: 'If you liked this project star <a href="https://github.com/ar33s0/fakesaz" target="_blank" rel="noopener noreferrer">My GitHub repository</a>.',
+                generate_btn: "Generate New Data",
+                copy_suffix: "copied",
+                title: "Iranian Identity Generator: Fake ID, Mobile, Address & Bank"
+            }
+        };
+
+        function t(key) {
+            return translations[currentLang][key] || key;
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (key === 'footer_text') {
+                    el.innerHTML = t(key);
+                } else {
+                    el.textContent = t(key);
+                }
+            });
+            document.getElementById('generateButton').textContent = t('generate_btn');
+            document.querySelector('h1').textContent = t('title');
+            document.getElementById('langToggle').textContent = currentLang === 'fa' ? '🇮🇷' : '🇺🇸';
+        }
+
+        function animateLangSwitch() {
+            const card = document.getElementById('outputCard');
+            card.classList.add('lang-switch-anim');
+            setTimeout(() => {
+                card.classList.remove('lang-switch-anim');
+            }, 400);
+        }
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'fa' ? 'en' : 'fa';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+            applyTranslations();
+            animateLangSwitch();
+            if (lastGeneratedData) {
+                displayData(lastGeneratedData);
+            }
+        });
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateNationalCode(cityCodePrefix) {
+            let nationalCodeBase = cityCodePrefix;
+            for (let i = 0; i < 6; i++) {
+                nationalCodeBase += getRandomNumber(0, 9).toString();
+            }
+            let sum = 0;
+            for (let i = 0; i < 9; i++) {
+                sum += parseInt(nationalCodeBase[i]) * (10 - i);
+            }
+            let remainder = sum % 11;
+            let controlDigit;
+            if (remainder < 2) {
+                controlDigit = remainder;
+            } else {
+                controlDigit = 11 - remainder;
+            }
+            return nationalCodeBase + controlDigit.toString();
+        }
+
+        function generateLuhnCardNumber(bin) {
+            let digits = bin.split('').map(Number);
+            for (let i = 0; i < 9; i++) {
+                digits.push(getRandomNumber(0, 9));
+            }
+            let luhnSum = 0;
+            let shouldDouble = false;
+            for (let i = digits.length - 1; i >= 0; i--) {
+                let digit = digits[i];
+                if (shouldDouble) {
+                    digit *= 2;
+                    if (digit > 9) digit -= 9;
+                }
+                luhnSum += digit;
+                shouldDouble = !shouldDouble;
+            }
+            let checkDigit = (10 - (luhnSum % 10)) % 10;
+            digits.push(checkDigit);
+            return digits.join('');
+        }
+
+        function generateRandomPersianDate(minAge) {
+            const currentPersianYear = 1404;
+            const maxBirthYear = currentPersianYear - minAge;
+            const year = getRandomNumber(1350, maxBirthYear);
+            let month = getRandomNumber(1, 12);
+            let day;
+            if (month <= 6) {
+                day = getRandomNumber(1, 31);
+            } else if (month <= 11) {
+                day = getRandomNumber(1, 30);
+            } else {
+                day = getRandomNumber(1, 29);
+            }
+            return `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}`;
+        }
+
+        function generateCardExpiryDate() {
+            const currentPersianYear = 1404;
+            const expiryYear = getRandomNumber(currentPersianYear + 2, currentPersianYear + 7);
+            const expiryMonth = getRandomNumber(1, 12);
+            return `${String(expiryMonth).padStart(2, '0')}/${expiryYear}`;
+        }
+
+        function generatePostalCode(range) {
+            const [min, max] = range;
+            const basePostalCode = getRandomNumber(min, max);
+            let fullPostalCode = basePostalCode.toString();
+            for (let i = 0; i < 5; i++) {
+                fullPostalCode += getRandomNumber(0, 9).toString();
+            }
+            return fullPostalCode;
+        }
+
+        function formatPhoneNumber(prefix) {
+            return '+98' + prefix.substring(1);
+        }
+
+        function generateUsername(latinFirstName, latinLastName, birthYear) {
+            const shortYear = birthYear.slice(-2);
+            const options = [
+                `${latinFirstName}${latinLastName}`,
+                `${latinFirstName}${latinLastName}${birthYear}`,
+                `${latinFirstName}_${latinLastName}${shortYear}`,
+                `${latinLastName}${latinFirstName}`
+            ];
+            return getRandomItem(options);
+        }
+
+        function generateFakeData() {
+            const isMale = Math.random() < 0.5;
+            const firstName = isMale ? getRandomItem(maleNames) : getRandomItem(femaleNames);
+            const lastName = getRandomItem(lastNames);
+            const fullName = `${firstName} ${lastName}`;
+            const selectedCity = getRandomItem(cities);
+            const nationalCodePrefix = getRandomItem(selectedCity.nationalCodePrefixes);
+            const streetName = getRandomItem(streetNames);
+            const alleyName = getRandomItem(alleyNames);
+            const plaque = getRandomNumber(1, 200);
+            const address = `${selectedCity.province}، ${selectedCity.name}، ${streetName}، ${alleyName}، ${t('address_plaque')} ${plaque}`;
+            const jobTitle = getRandomItem(jobTitles);
+            const selectedBank = getRandomItem(bankBins);
+            const birthDateRaw = generateRandomPersianDate(18);
+            const birthYear = birthDateRaw.split('/')[0];
+
+            const latinFirstName = getLatin(firstName);
+            const latinLastName = getLatin(lastName);
+
+            const rawData = {
+                isMale,
+                fullName,
+                firstName,
+                lastName,
+                selectedCity,
+                nationalCode: generateNationalCode(nationalCodePrefix),
+                phoneNumber: formatPhoneNumber(getRandomItem(mobilePrefixes) + Array.from({length: 7}, () => getRandomNumber(0, 9)).join('')),
+                cardNumber: generateLuhnCardNumber(selectedBank.bin),
+                cvv2: getRandomNumber(100, 999).toString(),
+                cardExpiry: generateCardExpiryDate(),
+                jobTitle,
+                postalCode: generatePostalCode(selectedCity.postcodeRange),
+                birthDate: birthDateRaw,
+                birthYear: birthYear,
+                address,
+                username: generateUsername(latinFirstName, latinLastName, birthYear)
+            };
+
+            lastGeneratedData = rawData;
+            displayData(rawData);
+        }
+
+        let lastGeneratedData = null;
+
+        function displayData(data) {
+            const gender = data.isMale ? t('gender_male') : t('gender_female');
+            const cityDisplay = `${data.selectedCity.name} (${data.selectedCity.province})`;
+            document.getElementById('fullName').textContent = data.fullName;
+            document.getElementById('gender').textContent = gender;
+            document.getElementById('birthCity').textContent = cityDisplay;
+            document.getElementById('nationalCode').textContent = data.nationalCode;
+            document.getElementById('phoneNumber').textContent = data.phoneNumber;
+            document.getElementById('cardNumber').textContent = data.cardNumber.replace(/(.{4})/g, '$1 ').trim();
+            document.getElementById('cvv2').textContent = data.cvv2;
+            document.getElementById('cardExpiry').textContent = data.cardExpiry;
+            document.getElementById('address').textContent = data.address;
+            document.getElementById('postalCode').textContent = data.postalCode;
+            document.getElementById('job').textContent = data.jobTitle;
+            document.getElementById('birthDate').textContent = data.birthDate;
+            document.getElementById('username').textContent = data.username;
+
+            const outputCard = document.getElementById('outputCard');
+            outputCard.style.transition = 'none';
+            outputCard.style.opacity = '0';
+            outputCard.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                outputCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                outputCard.style.opacity = '1';
+                outputCard.style.transform = 'translateY(0)';
+            }, 50);
+        }
+
+        function showCopyToast(labelText) {
+            const toast = document.getElementById('copyToast');
+            const msg = `${labelText} ${t('copy_suffix')}`;
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function attachCopyListeners() {
+            document.querySelectorAll('.data-value').forEach(valueEl => {
+                valueEl.addEventListener('click', function(e) {
+                    const text = this.textContent.trim();
+                    const labelEl = this.closest('.data-item').querySelector('.data-label');
+                    const labelText = labelEl ? labelEl.textContent.replace(/:$/, '').trim() : '';
+                    navigator.clipboard.writeText(text).then(() => {
+                        showCopyToast(labelText);
+                    }).catch(() => {
+                        showCopyToast(labelText);
+                    });
+                });
+            });
+        }
+
+        function createFooterSparkles() {
+            const footer = document.getElementById('footerSticky');
+            for (let i = 0; i < 8; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.top = `${Math.random() * 80 + 5}%`;
+                sparkle.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                sparkle.style.animationDelay = `${Math.random() * 5}s`;
+                footer.appendChild(sparkle);
+            }
+            const starSymbols = ['✦', '✧', '⋆', '✶'];
+            for (let i = 0; i < 5; i++) {
+                const star = document.createElement('span');
+                star.className = 'star';
+                star.textContent = starSymbols[Math.floor(Math.random() * starSymbols.length)];
+                star.style.top = `${Math.random() * 80 + 5}%`;
+                star.style.animationDuration = `${Math.random() * 2 + 3}s`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                footer.appendChild(star);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('generateButton').addEventListener('click', generateFakeData);
+            applyTranslations();
+            createFooterSparkles();
+            attachCopyListeners();
+            generateFakeData();
+        });
+    </script>
+</body>
+</html>
